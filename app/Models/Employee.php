@@ -28,4 +28,37 @@ class Employee extends Model
     {
         return $this->belongsTo(Employee::class, 'manager_id');
     }
+
+
+    public function getDailyProgress($date = null)
+    {
+        $date = $date ?? now()->toDateString();
+        return $this->sales()
+            ->whereDate('sale_date', $date)
+            ->sum('total_amount');
+    }
+
+    public function getMonthlyProgress($year = null, $month = null): array
+    {
+        $year = $year ?? now()->year;
+        $month = $month ?? now()->month;
+
+        $totalSales = $this->sales()
+            ->whereYear('sale_date', $year)
+            ->whereMonth('sale_date', $month)
+            ->sum('total_amount');
+
+        $goal = $this->goals()
+            ->where('year', $year)
+            ->where('month', $month)
+            ->value('target_amount') ?? 0;
+
+        $progress = $goal > 0 ? round(($totalSales / $goal) * 100, 2) : 0;
+
+        return [
+            'sales' => $totalSales ?? 0,
+            'goal' => $goal,
+            'progress' => $progress,
+        ];
+    }
 }

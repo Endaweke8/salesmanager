@@ -11,16 +11,23 @@ class Dashboard extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            Widgets\StatsOverview::class,
+            \App\Filament\Widgets\EmployeeProgressWidget::class,
             \App\Filament\Widgets\SalesChart::class,
             \App\Filament\Widgets\RecentOrders::class,
+
         ];
     }
 
 
     public function getColumns(): int | array
     {
-        return 2;
+        return [
+            'default' => 12, // use 12 columns total
+            'sm' => 12,
+            'md' => 12,
+            'lg' => 12,
+            'xl' => 12,
+        ];
     }
 
     public function getTitle(): string | Htmlable
